@@ -4,7 +4,7 @@
 This project implements a lightweight Convolutional Neural Network (CNN) for MNIST digit classification with a complete CI/CD pipeline using GitHub Actions. The model is designed to be efficient with less than 25,000 parameters while maintaining accuracy above 95%.
 
 ## Features
-- Lightweight CNN architecture (13,242 parameters)
+- Lightweight CNN architecture (~13,242 parameters)
 - Automated testing and validation
 - CI/CD pipeline with GitHub Actions
 - Progress tracking with tqdm
@@ -14,6 +14,7 @@ This project implements a lightweight Convolutional Neural Network (CNN) for MNI
 The model consists of:
 - 2 Convolutional layers (4 and 8 filters)
 - 2 MaxPooling layers
+- 2 Dropout layers (5% and 10% dropout rates)
 - 2 Fully connected layers (32 neurons and 10 outputs)
 - ReLU activation functions
 
@@ -24,21 +25,20 @@ The model consists of:
 - pytest
 - tqdm
 
-## Project Structure 
+## Project Structure
 ```
 ├── model/
-│ ├── init.py
-│ └── model.py # CNN model definition
+│   ├── __init__.py
+│   └── model.py          # CNN model definition
 ├── tests/
-│ └── test_model.py # Model tests
+│   └── test_model.py     # Model tests
 ├── .github/
-│ └── workflows/
-│ └── ml-pipeline.yml # CI/CD configuration
-├── train.py # Training script
-├── requirements.txt # Project dependencies
-├── .gitignore # Git ignore rules
-└── README.md # Project documentation
-  
+│   └── workflows/
+│       └── ml-pipeline.yml   # CI/CD configuration
+├── train.py              # Training script
+├── requirements.txt      # Project dependencies
+├── .gitignore           # Git ignore rules
+└── README.md            # Project documentation
 ```
 
 ## Getting Started
@@ -86,15 +86,19 @@ Tests verify that the model:
 
 ## Training Progress
 The training script provides detailed progress information:
-- Batch-wise progress bar
-- Loss values
-- Training and test accuracy every 100 batches
+- Continuous progress bar
+- Loss values and test accuracy every 100 batches
 - Final model performance metrics
 
 ## Model Performance
 - Parameters: ~13,242
+  - Conv1: 40 parameters (3×3×1×4 + 4)
+  - Conv2: 296 parameters (3×3×4×8 + 8)
+  - FC1: 12,576 parameters (8×7×7×32 + 32)
+  - FC2: 330 parameters (32×10 + 10)
 - Expected accuracy: >95% on MNIST test set
 - Training time: ~5 minutes on CPU
+- Regularization: Two dropout layers (5% and 10%)
 
 ## Contributing
 1. Fork the repository
