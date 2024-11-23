@@ -6,8 +6,8 @@ from model.model import MNISTModel
 import os
 
 def train():
-    # Set device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # Always use CPU
+    device = torch.device("cpu")
     
     # Load MNIST dataset
     transform = transforms.Compose([
@@ -38,7 +38,7 @@ def train():
     
     # Save model
     os.makedirs('saved_models', exist_ok=True)
-    torch.save(model.state_dict(), 'saved_models/mnist_model.pth')
+    torch.save(model.state_dict(), 'saved_models/mnist_model.pth', _use_new_zipfile_serialization=False)
 
 if __name__ == "__main__":
     train() 

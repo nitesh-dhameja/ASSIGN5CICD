@@ -17,11 +17,11 @@ def test_input_output_shape():
     assert output.shape == (1, 10), "Output shape is incorrect"
 
 def test_model_accuracy():
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
     model = MNISTModel().to(device)
     
     # Load saved model
-    model.load_state_dict(torch.load('saved_models/mnist_model.pth'))
+    model.load_state_dict(torch.load('saved_models/mnist_model.pth', map_location=device))
     model.eval()
     
     # Load test dataset
