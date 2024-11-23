@@ -50,4 +50,56 @@ def test_model_accuracy():
     
     accuracy = 100 * correct / total
     print(f"\nTest Accuracy: {accuracy:.2f}%")
-    assert accuracy > 95, f"Model accuracy ({accuracy:.2f}%) is below 95%" 
+    assert accuracy > 95, f"Model accuracy ({accuracy:.2f}%) is below 95%"
+
+def test_model_output_range():
+    """
+    Test if model outputs valid probabilities after softmax
+    """
+    model = MNISTModel()
+    model.eval()
+    test_input = torch.randn(1, 1, 28, 28)
+    output = torch.nn.functional.softmax(model(test_input), dim=1)
+    
+    # Check if outputs are valid probabilities (sum to 1 and between 0 and 1)
+    assert torch.allclose(output.sum(), torch.tensor(1.0), rtol=1e-5), "Output probabilities don't sum to 1"
+    assert (output >= 0).all() and (output <= 1).all(), "Output values not in valid probability range"
+    print("\nModel output probability test passed")
+
+def test_batch_processing():
+    """
+    Test if model can handle different batch sizes
+    """
+    model = MNISTModel()
+    model.eval()
+    
+    # Test with different batch sizes
+    batch_sizes = [1, 32, 64, 128]
+    for batch_size in batch_sizes:
+        test_input = torch.randn(batch_size, 1, 28, 28)
+        output = model(test_input)
+        assert output.shape == (batch_size, 10), f"Failed to process batch size {batch_size}"
+    
+    print("\nBatch processing test passed for sizes:", batch_sizes)
+
+def test_model_gradients():
+    """
+    Test if model gradients are properly computed
+    """
+    model = MNISTModel()
+    criterion = torch.nn.CrossEntropyLoss()
+    
+    # Forward pass
+    test_input = torch.randn(1, 1, 28, 28)
+    test_target = torch.tensor([5])  # Random target class
+    output = model(test_input)
+    loss = criterion(output, test_target)
+    
+    # Backward pass
+    loss.backward()
+    
+    # Check if gradients exist and are not zero for all parameters
+    has_gradients = all(param.grad is not None and param.grad.abs().sum() > 0 
+                       for param in model.parameters() if param.requires_grad)
+    assert has_gradients, "Model parameters are missing gradients"
+    print("\nGradient computation test passed")
