@@ -22,10 +22,8 @@ def evaluate(model, device, data_loader):
     return accuracy
 
 def train():
-    # Always use CPU
     device = torch.device("cpu")
     
-    # Load MNIST dataset
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,))
@@ -37,16 +35,15 @@ def train():
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
     test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=1000)
     
-    # Initialize model
     model = MNISTModel().to(device)
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters())
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
     
-    # Train for one epoch
     model.train()
-    pbar = tqdm(train_loader, desc='Training')
+    total_batches = len(train_loader)
+    pbar = tqdm(total=total_batches, desc='Training')
     
-    for batch_idx, (data, target) in enumerate(pbar):
+    for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output = model(data)
@@ -54,35 +51,25 @@ def train():
         loss.backward()
         optimizer.step()
         
-        # Update progress bar after each batch
-        _, predicted = torch.max(output.data, 1)
-        correct = (predicted == target).sum().item()
-        accuracy = 100 * correct / len(target)
+        pbar.update(1)
         
-        pbar.set_postfix({
-            'batch': f'{batch_idx}/{len(train_loader)}',
-            'loss': f'{loss.item():.4f}',
-            'batch_acc': f'{accuracy:.2f}%'
-        })
-        
-        # Detailed evaluation every 100 batches
         if batch_idx % 100 == 0:
             train_accuracy = evaluate(model, device, train_loader)
             test_accuracy = evaluate(model, device, test_loader)
-            print(f'\nBatch {batch_idx}/{len(train_loader)}:')
-            print(f'Current Loss: {loss.item():.4f}')
-            print(f'Training Accuracy: {train_accuracy:.2f}%')
+            pbar.set_postfix({
+                'batch': f'{batch_idx}/{total_batches}',
+                'loss': f'{loss.item():.4f}',
+                'test_acc': f'{test_accuracy:.2f}%'
+            })
+            print(f'\nBatch {batch_idx}/{total_batches}:')
             print(f'Test Accuracy: {test_accuracy:.2f}%')
-            print('-' * 50)
+            print('-' * 30)
     
-    # Final evaluation
-    train_accuracy = evaluate(model, device, train_loader)
+    pbar.close()
+    
     test_accuracy = evaluate(model, device, test_loader)
-    print(f'\nFinal Results:')
-    print(f'Training Accuracy: {train_accuracy:.2f}%')
-    print(f'Test Accuracy: {test_accuracy:.2f}%')
+    print(f'\nFinal Test Accuracy: {test_accuracy:.2f}%')
     
-    # Save model
     os.makedirs('saved_models', exist_ok=True)
     torch.save(model.state_dict(), 'saved_models/mnist_model.pth', _use_new_zipfile_serialization=False)
 
