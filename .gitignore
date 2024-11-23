@@ -45,4 +45,7 @@ tensorboard/
 
 # OS specific
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Augmented samples
+augmented_samples/

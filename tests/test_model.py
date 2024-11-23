@@ -50,4 +50,4 @@ def test_model_accuracy():
     
     accuracy = 100 * correct / total
     print(f"\nTest Accuracy: {accuracy:.2f}%")
-    assert accuracy > 80, f"Model accuracy ({accuracy:.2f}%) is below 80%" 
+    assert accuracy > 95, f"Model accuracy ({accuracy:.2f}%) is below 95%" 
