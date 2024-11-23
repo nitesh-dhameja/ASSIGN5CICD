@@ -82,7 +82,7 @@ Tests verify that the model:
 - Has less than 25,000 parameters
 - Accepts 28x28 input images
 - Outputs 10 classes
-- Achieves >80% accuracy on test set
+- Achieves >95% accuracy on test set
 
 ## Training Progress
 The training script provides detailed progress information:
@@ -93,7 +93,7 @@ The training script provides detailed progress information:
 
 ## Model Performance
 - Parameters: ~13,242
-- Expected accuracy: >80% on MNIST test set
+- Expected accuracy: >95% on MNIST test set
 - Training time: ~5 minutes on CPU
 
 ## Contributing
